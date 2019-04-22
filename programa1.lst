@@ -1,0 +1,112 @@
+MPASM  5.14                     PROGRAMA1.ASM   4-22-2019  17:52:27         PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+Error[105]  : Cannot open file (Include File "PIC16f873A.inc" not found)
+                      00001 #include <PIC16f873A.inc>
+                      00002 
+                      00003 
+                      00004 ; PROGRAMA 1
+                      00005 ; Programa feito para comunicação serial com o pic16f873a para matéria de compiladores
+                      00006 ; Evandro Fernandes e Leonardo Silvatti
+                      00007 ;  UNESP - BAURU - 2019
+                      00008 
+                      00009 
+                      00010 ;O PIC deverá ficar em um loop constante enviando o byte 65 para o PC,
+                      00011 ; via interface serial, com taca de 9600 bps.
+                      00012 
+                      00013 
+Warning[205]: Found directive in column 1. (ORG)
+                      00014 ORG 0x00
+Warning[203]: Found opcode in column 1. (GOTO)
+0000   2???           00015 GOTO LOOP
+Warning[205]: Found directive in column 1. (ORG)
+                      00016 ORG 0X04
+                      00017 
+                      00018 ; CONFIGURANDO A PORTA SERIAL PARA FUNCIONAR COMO 9600
+                      00019 
+                      00020 
+                      00021 
+                      00022 ;NOTA: TODOS OS REGISTRADORES USADOS ABAIXOS ESTÃO NO BANK1 DO JUNTOS COM O TRISB
+Warning[205]: Found directive in column 1. (BANKSEL)
+Error[113]  : Symbol not previously defined (TRISB)
+0004   1283 1303      00023 BANKSEL TRISB ; ALOCA A MEMORIA PARA O BANCO DO TRISB
+                      00024 
+                      00025 
+                      00026 
+                      00027 
+Warning[203]: Found opcode in column 1. (MOVLW)
+Error[107]  : Illegal digit (  in binary)
+0006   300D           00028 MOVLW b'0000 01101' ; 3º mais sig  BRGH = 1
+Warning[203]: Found opcode in column 1. (MOVWF)
+Error[113]  : Symbol not previously defined (TRISB)
+0007   0080           00029 MOVWF TRISB         ; TRISB = W 
+                      00030 
+                      00031 ; CONFIGURANDO OS REGISTRADORES DE TRANSMISÃO (TXSTA) E RECEPCAO (RCSTA)
+Warning[203]: Found opcode in column 1. (MOVLW)
+Error[107]  : Illegal digit (  in binary)
+0008   3026           00032 MOVLW b'0010 0110' ; W = O BIT B 'usando o clock interno/8 bits transmissão/ Habilita transmisão/aasincr
+                            ini/x/alta velocidade/vazio/bit de paridade 
+Warning[203]: Found opcode in column 1. (MOVWF)
+Error[113]  : Symbol not previously defined (TXSTA)
+0009   0080           00033 MOVWF TXSTA        ; TXTSTA = W  REGISTRADOR DE TRANSMISÃO
+Warning[203]: Found opcode in column 1. (MOVLW)
+000A   3019           00034 MOVLW d'25'        ; W = VALOR LITERAL DECIMAL 25
+Warning[203]: Found opcode in column 1. (MOVWF)
+Error[113]  : Symbol not previously defined (SPBRG)
+000B   0080           00035 MOVWF SPBRG        ; VALOR DO REGISTRADOR PARA FUNCIONAR A 9600 
+MPASM  5.14                     PROGRAMA1.ASM   4-22-2019  17:52:27         PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+
+                      00036 
+                      00037 
+Warning[205]: Found directive in column 1. (BANKSEL)
+Error[113]  : Symbol not previously defined (PORTB)
+000C   1283 1303      00038 BANKSEL PORTB ; ALOCA A MEMORIA PARA O BANCO DO PORTB (BANK0)
+Warning[203]: Found opcode in column 1. (MOVLW)
+Error[107]  : Illegal digit (  in binary)
+000E   3090           00039 MOVLW b'1001 0000' ; habilita porta serial/8 bits de recepção/ não importa no assin/recebimento continuo
+                            /detecção de ende desabilitado/erro de enquadramento (sem erro)/ bit cheio (sem erro)/
+Warning[203]: Found opcode in column 1. (MOVWF)
+Error[113]  : Symbol not previously defined (RCSTA)
+000F   0080           00040 MOVWF RCSTA        ; RCSTA = W  REGISTRADOR DE RECEPCAO
+                      00041 
+                      00042 ;FIM DAS CONFIGURAÇÕES
+                      00043 
+                      00044 
+                      00045 
+                      00046 ;CONTA FEITA  SPRG = (4/ 16*9600) C0OM BRGH =0 POR QUE TEM MENOS ERRO
+                      00047 
+                      00048 ;TXREG funciona como buffer de transmissão
+                      00049 ;RCREG funciona como bufer de cominicação
+                      00050 
+0010                  00051 LOOP:
+Error[113]  : Symbol not previously defined (TXSTA)
+Error[113]  : Symbol not previously defined (TRMT)
+0010   1C00           00052         BTFSS TXSTA,TRMT ; BOFFER TA VAZIO?
+0011   2???           00053         GOTO LOOP        ; NÃO
+0012   3041           00054         MOVLW d'65'      ; ENVIA UM VALOR PARA O REGISTRADOR W
+Error[113]  : Symbol not previously defined (TXREG)
+0013   0080           00055         MOVWF  TXREG     ; MANDO O VALOR DE W PARA TRANSMISSÃO
+0014   2???           00056         GOTO LOOP        ; VOLTA PRO LOOP 
+Warning[205]: Found directive in column 1. (END)
+                      00057 END
+MPASM  5.14                     PROGRAMA1.ASM   4-22-2019  17:52:27         PAGE  3
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+LOOP                              00000010
+__16F873A                         00000001
+
+Errors   :    13
+Warnings :    14 reported,     0 suppressed
+Messages :     0 reported,     0 suppressed
+
+
